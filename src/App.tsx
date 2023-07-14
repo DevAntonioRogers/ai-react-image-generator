@@ -1,7 +1,11 @@
 import { useEffect, useState, useRef } from "react";
+import { Configuration, OpenAIApi } from "openai";
 
 const App = () => {
   const [placeholder, setPlaceholder] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
   const phrases = [
     "A Pineapple in the ocean",
     "Astronaut on the moon with a beer",
@@ -49,6 +53,32 @@ const App = () => {
     };
   }, []);
 
+  const configuration = new Configuration({
+    apiKey: import.meta.env.REACT_APP_OPENAI_API_KEY,
+  });
+
+  const openai = new OpenAIApi(configuration);
+
+  const generateImage = async () => {
+    setPlaceholder(`Search ${prompt}..`);
+    setLoading(true);
+
+    try {
+      const res = await openai.createImage({
+        prompt: prompt,
+        n: 1,
+        size: "512x512",
+      });
+
+      setLoading(false);
+      setResult(res.data.data[0].url);
+      console.log(result);
+    } catch (error) {
+      setLoading(false);
+      console.error(`Error generating image: ${error.response.data.error.message}`);
+    }
+  };
+
   return (
     <div className="w-screen h-screen bg-black flex justify-center items-center flex-col">
       <h1 className="text-5xl font-bold uppercase bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-transparent bg-clip-text">
@@ -56,9 +86,16 @@ const App = () => {
       </h1>
       <span className="text-white font-semibold">Creat images using Artificial Intelligence. Try it now!</span>
 
+      {result.length > 0 ? <img className="result-image" src={result} alt="result" /> : <></>}
+
       <form className="mt-20 flex">
-        <input className="w-80 rounded-md px-1" type="text" placeholder={placeholder} />
-        <button>
+        <input
+          className="w-80 rounded-md px-1"
+          type="text"
+          placeholder={placeholder}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
+        <button onClick={generateImage}>
           <span className="bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-white py-1 px-3 bg-clip-text text-transparent text-2xl cursor-pointer">
             Create ✨
           </span>

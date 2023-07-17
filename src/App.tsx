@@ -16,7 +16,7 @@ const App = () => {
   const deletingSpeed = 50;
   const delayBeforeTyping = 1000;
 
-  const typingTimerRef = useRef(null);
+  const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     let currentIndex = 0;

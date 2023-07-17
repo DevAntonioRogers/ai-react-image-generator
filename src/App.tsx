@@ -54,12 +54,16 @@ const App = () => {
   }, []);
 
   const configuration = new Configuration({
-    apiKey: import.meta.env.REACT_APP_OPENAI_API_KEY,
+    apiKey: import.meta.env.VITE_REACT_APP_OPENAI_API_KEY,
   });
 
+  configuration.baseOptions.headers = {
+    Authorization: "Bearer " + import.meta.env.VITE_REACT_APP_OPENAI_API_KEY,
+  };
   const openai = new OpenAIApi(configuration);
 
-  const generateImage = async () => {
+  const generateImage = async (e) => {
+    e.preventDefault();
     setPlaceholder(`Search ${prompt}..`);
     setLoading(true);
 
@@ -86,14 +90,12 @@ const App = () => {
       </h1>
       <span className="text-white font-semibold">Creat images using Artificial Intelligence. Try it now!</span>
 
-      {result.length > 0 ? <img className="result-image" src={result} alt="result" /> : <></>}
-
       <form className="mt-20 flex">
         <input
           className="w-80 rounded-md px-1"
           type="text"
           placeholder={placeholder}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => setPrompt(e.target.value as string)}
         />
         <button onClick={generateImage}>
           <span className="bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-white py-1 px-3 bg-clip-text text-transparent text-2xl cursor-pointer">
@@ -101,6 +103,16 @@ const App = () => {
           </span>
         </button>
       </form>
+
+      {loading ? (
+        <div className=" text-5xl font-bold uppercase bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-transparent bg-clip-text mt-10">
+          Loading...
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {result.length > 0 ? <img className="mt-10" src={result} alt="Generated Image" /> : <></>}
     </div>
   );
 };

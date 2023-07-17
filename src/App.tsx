@@ -3,7 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 
 const App = () => {
   const [placeholder, setPlaceholder] = useState("");
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState<string>("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const phrases = [
@@ -49,7 +49,10 @@ const App = () => {
     typingTimerRef.current = setTimeout(type, delayBeforeTyping);
 
     return () => {
-      clearTimeout(typingTimerRef.current);
+      const timer = typingTimerRef.current;
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
     };
   }, []);
 
@@ -75,7 +78,7 @@ const App = () => {
       });
 
       setLoading(false);
-      setResult(res.data.data[0].url);
+      setResult(res.data.data[0].url!);
       console.log(result);
     } catch (error) {
       setLoading(false);
@@ -95,7 +98,7 @@ const App = () => {
           className="w-80 rounded-md px-1"
           type="text"
           placeholder={placeholder}
-          onChange={(e) => setPrompt(e.target.value as string)}
+          onChange={(e) => setPrompt(e.target.value)}
         />
         <button onClick={generateImage}>
           <span className="bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-white py-1 px-3 bg-clip-text text-transparent text-2xl cursor-pointer">

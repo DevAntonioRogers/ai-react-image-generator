@@ -93,7 +93,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-black flex justify-center items-center flex-col">
+    <div className="w-screen h-screen bg-black flex justify-center items-center flex-col p-5 text-center">
       <h1 className="text-5xl font-bold uppercase bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-transparent bg-clip-text">
         Ai Image Generator
       </h1>

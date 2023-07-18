@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, FormEvent } from "react";
 import { Configuration, OpenAIApi } from "openai";
 
 const App = () => {
   const [placeholder, setPlaceholder] = useState("");
-  const [prompt, setPrompt] = useState<string>("");
+  const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const phrases = [
@@ -65,7 +65,7 @@ const App = () => {
   };
   const openai = new OpenAIApi(configuration);
 
-  const generateImage = async (e) => {
+  const generateImage = async (e: FormEvent) => {
     e.preventDefault();
     setPlaceholder(`Search ${prompt}..`);
     setLoading(true);
@@ -82,7 +82,13 @@ const App = () => {
       console.log(result);
     } catch (error) {
       setLoading(false);
-      console.error(`Error generating image: ${error.response.data.error.message}`);
+      if (typeof error === "string") {
+        console.error(`Error generating image: ${error}`);
+      } else if (error instanceof Error) {
+        console.error(`Error generating image: ${error.message}`);
+      } else {
+        console.error("Unknown error occurred:", error);
+      }
     }
   };
 
@@ -98,7 +104,7 @@ const App = () => {
           className="w-80 rounded-md px-1"
           type="text"
           placeholder={placeholder}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => setPrompt(e.target.value as string)}
         />
         <button onClick={generateImage}>
           <span className="bg-gradient-to-r from-pink-500 via-yellow-300 to-green-300 text-white py-1 px-3 bg-clip-text text-transparent text-2xl cursor-pointer">
